@@ -1,0 +1,16 @@
+{
+  "name": "Kasir SPBU Pro",
+  "short_name": "Kasir SPBU",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f2f5",
+  "theme_color": "#1976d2",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
