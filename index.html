@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasir SPBU Pro</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1976d2">
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; background-color: #f4f4f9; }
+        .container { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+        .box { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 100%; max-width: 380px; box-sizing: border-box; }
+        .section-title { font-size: 14px; color: #1976d2; border-bottom: 2px solid #e3f2fd; padding-bottom: 5px; margin-bottom: 10px; margin-top: 15px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 12px; color: #333; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+        input[type="file"] { padding: 5px; background: #e3f2fd; border: 1px dashed #2196f3; cursor: pointer; }
+        .input-highlight { background-color: #fff9c4; border: 1px solid #fbc02d; font-weight: bold; }
+        
+        .btn-preview { background-color: #546e7a; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 20px; border-radius: 4px; padding: 12px; width: 100%; }
+        .btn-print { background-color: #1976d2; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; border-radius: 4px; padding: 14px; width: 100%; }
+        .btn-reset { background-color: #e53935; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; border-radius: 4px; padding: 10px; width: 100%; }
+        
+        .btn-clear { background-color: #757575; color: white; border: none; font-size: 12px; padding: 8px; cursor: pointer; border-radius: 4px; margin-top: 15px; width: 100%; }
+        .btn-reprint { background-color: #2e7d32; color: white; border: none; font-size: 11px; padding: 5px 8px; cursor: pointer; border-radius: 3px; font-weight: bold; }
+        #statusText { margin-top: 10px; font-size: 13px; font-weight: bold; text-align: center; color: #d32f2f; }
+        .struk-wrapper { background: #fffde7; padding: 15px; border: 1px dashed #ccc; margin-top: 10px; overflow-x: auto; }
+        .logo-preview { text-align: center; margin-bottom: 10px; min-height: 55px; }
+        .logo-preview img { max-width: 140px; max-height: 80px; filter: grayscale(100%); object-fit: contain; }
+        pre { font-family: 'Courier New', Courier, monospace; font-size: 12px; white-space: pre; color: #000; margin: 0; padding: 0; border: none; background: transparent; line-height: 1.2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        th, td { padding: 8px 5px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background-color: #f5f5f5; font-weight: bold; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+
+    <h2>Aplikasi Kasir SPBU Pro</h2>
+    
+    <div class="container">
+        <div class="box">
+            <label>Upload Logo (Opsional)</label>
+            <input type="file" id="inputLogo" accept="image/*">
+
+            <div class="section-title">1. Informasi SPBU</div>
+            <div class="grid-2">
+                <div><label>No. SPBU</label><input type="text" id="noSpbu" value="31.102.02"></div>
+                <div><label>Nama SPBU</label><input type="text" id="namaSpbu" value="SPBU ABDUL MUIS"></div>
+            </div>
+            <label>Alamat Baris 1</label>
+            <input type="text" id="alamatSpbu1" value="JL. ABDUL MUIS NO.59, PETOJO SEL">
+            <label>Alamat Baris 2</label>
+            <input type="text" id="alamatSpbu2" value=", KEC. GAMBIR, JAKARTA PUSAT">
+
+            <div class="section-title">2. Data Transaksi</div>
+            <label>Tanggal & Waktu (Otomatis / Bisa Diedit)</label>
+            <input type="text" id="waktuCustom" class="input-highlight" placeholder="Contoh: 09/01/2026 08:00:14">
+            <div class="grid-2">
+                <div><label>Shift</label><input type="text" id="shift" value="1"></div>
+                <div><label>No. Trans</label><input type="text" id="noTrans" value="3389568"></div>
+            </div>
+            <div class="grid-2">
+                <div><label>Pompa</label><input type="text" id="pompa" value="B"></div>
+                <div><label>Operator</label><input type="text" id="operator" value="NINDI"></div>
+            </div>
+            <label>Plat No (Opsional)</label>
+            <input type="text" id="platNo" value="BE1338FR">
+
+            <div class="section-title">3. Detail BBM & Subsidi</div>
+            <label>Jenis BBM</label>
+            <select id="jenisBbm">
+                <option value="PERTALITE" selected>PERTALITE</option>
+                <option value="BIOSOLAR">BIOSOLAR</option>
+                <option value="PERTAMAX">PERTAMAX</option>
+                <option value="DEXLITE">DEXLITE</option>
+            </select>
+            <div class="grid-2">
+                <div><label>Harga Jual / Liter (Rp)</label><input type="number" id="hargaJual" value="10000"></div>
+                <div><label>Subsidi / Liter (Rp) *Isi 0 jika non-subsidi</label><input type="number" id="subsidiLiter" value="992"></div>
+            </div>
+            <label class="input-highlight" style="padding: 5px;">Total Uang Konsumen (Rp)</label>
+            <input type="number" id="totalBayar" value="370000" class="input-highlight">
+            
+            <label>Ucapan Penutup / Keterangan (Opsional)</label>
+            <input type="text" id="keterangan" value="">
+
+            <button class="btn-preview" onclick="buatStruk()">BUAT PREVIEW</button>
+            <button class="btn-print" onclick="printBluetooth()">CETAK BLUETOOTH</button>
+            <button class="btn-reset" onclick="putuskanBluetooth()">RESET KONEKSI PRINTER</button>
+            <div id="statusText">Status: Standby</div>
+        </div>
+
+        <div class="box">
+            <label>Preview Struk:</label>
+            <div class="struk-wrapper">
+                <div class="logo-preview"><img id="logoUpload" src="" style="display: none;"></div>
+                <pre id="hasilStruk">Klik "BUAT PREVIEW" dulu</pre>
+            </div>
+        </div>
+
+        <div class="box">
+            <label style="font-size: 16px; margin-top: 0;">Riwayat Cetak Berhasil</label>
+            <div style="overflow-x: auto;">
+                <table id="tabelRiwayat">
+                    <thead>
+                        <tr><th>Tgl & Waktu</th><th>Plat No</th><th>Produk</th><th class="text-right">Total</th><th class="text-center">Aksi</th></tr>
+                    </thead>
+                    <tbody id="isiRiwayat"></tbody>
+                </table>
+            </div>
+            <button class="btn-clear" onclick="hapusRiwayat()">Hapus Semua Riwayat</button>
+        </div>
+    </div>
+
+    <script>
+        let teksStrukGlobal = "";
+        let bluetoothCharacteristic = null;
+        let bluetoothDeviceGlobal = null;
+
+        window.onload = function() {
+            document.getElementById("waktuCustom").value = dapatkanWaktu();
+            tampilkanRiwayat();
+        };
+
+        document.getElementById('inputLogo').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const logo = document.getElementById('logoUpload');
+            if (file) { const reader = new FileReader(); reader.onload = (e) => { logo.src = e.target.result; logo.style.display = 'inline-block'; }; reader.readAsDataURL(file); }
+        });
+
+        function centerText(text, maxWidth) { return text.length >= maxWidth ? text : " ".repeat(Math.floor((maxWidth - text.length) / 2)) + text; }
+        function leftRightText(left, right, maxWidth) { const space = maxWidth - left.length - right.length; return space <= 0 ? left + " " + right : left + " ".repeat(space) + right; }
+        
+        // Format dengan separator koma seperti di struk asli
+        function formatAngka(angka) { return new Intl.NumberFormat('en-US').format(Math.round(angka)); }
+        function formatVolume(angka) { return new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(angka); }
+        
+        function dapatkanWaktu() { 
+            const now = new Date(); const pad = (n) => n.toString().padStart(2, '0'); 
+            return `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`; 
+        }
+
+        function buatStruk() {
+            const noSpbu = document.getElementById("noSpbu").value.trim().toUpperCase();
+            const namaSpbu = document.getElementById("namaSpbu").value.trim().toUpperCase();
+            const alamatSpbu1 = document.getElementById("alamatSpbu1").value.trim().toUpperCase();
+            const alamatSpbu2 = document.getElementById("alamatSpbu2").value.trim().toUpperCase();
+            const waktuStruk = document.getElementById("waktuCustom").value.trim(); 
+            const shift = document.getElementById("shift").value;
+            const noTrans = document.getElementById("noTrans").value;
+            const pompa = document.getElementById("pompa").value.toUpperCase();
+            const operator = document.getElementById("operator").value.toUpperCase();
+            const platNo = document.getElementById("platNo").value.trim().toUpperCase(); 
+            const keterangan = document.getElementById("keterangan").value.trim();
+            const jenisBbm = document.getElementById("jenisBbm").value;
+            
+            const hargaJual = parseFloat(document.getElementById("hargaJual").value) || 0;
+            const subsidiLiter = parseFloat(document.getElementById("subsidiLiter").value) || 0;
+            const totalBayar = parseFloat(document.getElementById("totalBayar").value) || 0;
+
+            // Kalkulasi Otomatis
+            const volume = totalBayar / hargaJual;
+            const hargaNonSubsidi = hargaJual + subsidiLiter;
+            const totalSubsidi = subsidiLiter * volume;
+            const totalTanpaSubsidi = totalBayar + totalSubsidi;
+
+            const LEBAR = 32; let k = "";
+            
+            // Header Info
+            if (noSpbu !== "") k += centerText(noSpbu, LEBAR) + "\n";
+            if (namaSpbu !== "") k += centerText(namaSpbu, LEBAR) + "\n";
+            if (alamatSpbu1 !== "") k += centerText(alamatSpbu1, LEBAR) + "\n";
+            if (alamatSpbu2 !== "") k += centerText(alamatSpbu2, LEBAR) + "\n";
+            
+            k += leftRightText(`Shift   : ${shift}`, `No. Trans:${noTrans}`, LEBAR) + "\n";
+            k += `Waktu   :${waktuStruk}\n`;
+            k += "-".repeat(LEBAR) + "\n";
+            
+            // Transaksi Info
+            k += "Pulau/Pompa : " + pompa + "\n";
+            k += "Operator    : " + operator + "\n";
+            k += "Jenis BBM   : " + jenisBbm + "\n";
+            k += "Volume      : " + formatVolume(volume) + " liter\n";
+            k += "-".repeat(LEBAR) + "\n";
+            
+            // Format Subsidi vs Non Subsidi
+            if (subsidiLiter > 0) {
+                k += "Informasi Harga BBM (Rp/Liter)\n";
+                k += "Harga Non Subsidi :".padEnd(19) + formatAngka(hargaNonSubsidi).padStart(13) + "\n";
+                k += "Subsidi Pemerintah:".padEnd(19) + formatAngka(subsidiLiter).padStart(13) + "\n";
+                k += "Harga Jual        :".padEnd(19) + formatAngka(hargaJual).padStart(13) + "\n";
+                k += "-".repeat(LEBAR) + "\n";
+                
+                k += "Total Penjualan (Rp)\n";
+                k += "Tanpa Subsidi     :".padEnd(19) + formatAngka(totalTanpaSubsidi).padStart(13) + "\n";
+                k += "Subsidi Pemerintah:".padEnd(19) + formatAngka(totalSubsidi).padStart(13) + "\n";
+                k += "Dibayar Konsumen  :".padEnd(19) + formatAngka(totalBayar).padStart(13) + "\n";
+            } else {
+                k += "Harga/Liter : Rp " + formatAngka(hargaJual).padStart(15) + "\n";
+                k += "Total Harga : Rp " + formatAngka(totalBayar).padStart(15) + "\n";
+            }
+            
+            k += "-".repeat(LEBAR) + "\n";
+            k += "CASH\n";
+            k += formatAngka(totalBayar).padStart(LEBAR) + "\n"; 
+            k += "-".repeat(LEBAR) + "\n";
+            
+            if (platNo !== "") k += "No. Plat : " + platNo + "\n";
+            
+            if (subsidiLiter > 0) {
+                k += "\n";
+                k += centerText("Anda mendapat subsidi dari", LEBAR) + "\n";
+                k += centerText(`pemerintah sebesar Rp ${formatAngka(totalSubsidi)}`, LEBAR) + "\n";
+                k += centerText("(perhitungan subsidi unaudited)", LEBAR) + "\n";
+            }
+            
+            if (keterangan !== "") k += "\n" + centerText(keterangan, LEBAR) + "\n";
+            k += "\n\n\n\n";
+
+            teksStrukGlobal = k;
+            document.getElementById("hasilStruk").innerText = k;
+        }
+
+        function simpanRiwayat() {
+            const dataBaru = { waktu: document.getElementById("waktuCustom").value.trim(), platNo: document.getElementById("platNo").value || "-", jenisBbm: document.getElementById("jenisBbm").value, total: document.getElementById("totalBayar").value, strukAsli: teksStrukGlobal };
+            let riwayatLama = JSON.parse(localStorage.getItem("riwayatStrukBbm")) || [];
+            riwayatLama.unshift(dataBaru);
+            localStorage.setItem("riwayatStrukBbm", JSON.stringify(riwayatLama.slice(0, 20)));
+            tampilkanRiwayat();
+        }
+
+        function tampilkanRiwayat() {
+            const isiTabel = document.getElementById("isiRiwayat");
+            let riwayat = JSON.parse(localStorage.getItem("riwayatStrukBbm")) || [];
+            isiTabel.innerHTML = ""; 
+            if (riwayat.length === 0) { isiTabel.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888;">Belum ada riwayat cetak</td></tr>`; return; }
+            riwayat.forEach((item, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td>${item.waktu}</td><td>${item.platNo.toUpperCase()}</td><td>${item.jenisBbm}</td><td class="text-right">${formatAngka(item.total)}</td><td class="text-center"><button class="btn-reprint" onclick="cetakUlang(${index})">PRINT</button></td>`;
+                isiTabel.appendChild(tr);
+            });
+        }
+
+        function hapusRiwayat() { if (confirm("Hapus semua riwayat struk?")) { localStorage.removeItem("riwayatStrukBbm"); tampilkanRiwayat(); } }
+
+        function generateImageESCData(imgElement) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                let targetWidth = 256; let targetHeight = Math.floor((imgElement.height / imgElement.width) * targetWidth);
+                canvas.width = targetWidth; canvas.height = targetHeight;
+                ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+                const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                const widthBytes = Math.floor(targetWidth / 8);
+                const headerData = [0x1B, 0x61, 0x01, 0x1D, 0x76, 0x30, 0x00, widthBytes % 256, Math.floor(widthBytes / 256), targetHeight % 256, Math.floor(targetHeight / 256)];
+                const imageBytes = new Uint8Array(widthBytes * targetHeight);
+                let byteIndex = 0;
+                for (let y = 0; y < targetHeight; y++) {
+                    for (let x = 0; x < widthBytes; x++) {
+                        let byte = 0;
+                        for (let bit = 0; bit < 8; bit++) {
+                            const idx = (y * targetWidth + (x * 8 + bit)) * 4;
+                            if ((0.299 * pixels[idx] + 0.587 * pixels[idx+1] + 0.114 * pixels[idx+2]) < 150) byte |= (1 << (7 - bit));
+                        }
+                        imageBytes[byteIndex++] = byte;
+                    }
+                }
+                const footerData = [0x1B, 0x61, 0x00, 0x0A]; 
+                const finalBuffer = new Uint8Array(headerData.length + imageBytes.length + footerData.length);
+                finalBuffer.set(headerData, 0); finalBuffer.set(imageBytes, headerData.length); finalBuffer.set(footerData, headerData.length + imageBytes.length);
+                resolve(finalBuffer);
+            });
+        }
+
+        async function kirimDataBertahap(characteristic, uint8ArrayData) {
+            const chunkSize = 256; 
+            for (let i = 0; i < uint8ArrayData.length; i += chunkSize) {
+                await characteristic.writeValue(uint8ArrayData.slice(i, i + chunkSize));
+                await new Promise(resolve => setTimeout(resolve, 20)); 
+            }
+        }
+
+        function putuskanBluetooth() {
+            if (bluetoothDeviceGlobal && bluetoothDeviceGlobal.gatt.connected) {
+                bluetoothDeviceGlobal.gatt.disconnect();
+            }
+            bluetoothCharacteristic = null;
+            document.getElementById("statusText").innerText = "Status: Koneksi Di-reset. Standby.";
+            document.getElementById("statusText").style.color = "#d32f2f";
+            alert("Jalur Bluetooth telah dibersihkan! Silakan klik CETAK BLUETOOTH lagi.");
+        }
+
+        async function eksekusiBluetooth(teksCetak) {
+            const statusDiv = document.getElementById("statusText");
+            if (!navigator.bluetooth) {
+                statusDiv.innerText = "Error: Browser ini memblokir akses Bluetooth!"; 
+                statusDiv.style.color = "red";
+                alert("GAGAL: Browser atau Aplikasi ini tidak mengizinkan akses Bluetooth. PASTIKAN Anda menggunakan Google Chrome asli!");
+                return false;
+            }
+
+            try {
+                if (!bluetoothCharacteristic) {
+                    statusDiv.innerText = "Status: Meminta izin Bluetooth..."; statusDiv.style.color = "orange";
+                    const device = await navigator.bluetooth.requestDevice({ 
+                        acceptAllDevices: true, 
+                        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] 
+                    });
+                    bluetoothDeviceGlobal = device;
+                    statusDiv.innerText = "Status: Menyambungkan ke " + device.name + "...";
+                    const server = await device.gatt.connect();
+                    const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+                    bluetoothCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+                }
+                
+                statusDiv.innerText = "Status: Sedang mengirim data cetak...";
+                const imgUpload = document.getElementById("logoUpload");
+                if (imgUpload.src && imgUpload.style.display !== 'none') {
+                    const imageEscData = await generateImageESCData(imgUpload);
+                    await kirimDataBertahap(bluetoothCharacteristic, imageEscData);
+                }
+                
+                const encoder = new TextEncoder();
+                await kirimDataBertahap(bluetoothCharacteristic, encoder.encode(teksCetak));
+                
+                statusDiv.innerText = "Status: Berhasil Dicetak Penuh!"; statusDiv.style.color = "green";
+                return true;
+            } catch (error) { 
+                console.error(error); 
+                statusDiv.innerText = "Gagal: " + error.message; statusDiv.style.color = "red"; 
+                bluetoothCharacteristic = null; 
+                return false; 
+            }
+        }
+
+        async function printBluetooth() {
+            if (!teksStrukGlobal) { alert("Buat preview dulu!"); return; }
+            const sukses = await eksekusiBluetooth(teksStrukGlobal);
+            if (sukses) {
+                simpanRiwayat();
+                let transLama = parseInt(document.getElementById("noTrans").value);
+                if (!isNaN(transLama)) document.getElementById("noTrans").value = transLama + 1;
+                document.getElementById("waktuCustom").value = dapatkanWaktu();
+            }
+        }
+
+        async function cetakUlang(index) {
+            const riwayat = JSON.parse(localStorage.getItem("riwayatStrukBbm")) || [];
+            const strukLama = riwayat[index].strukAsli;
+            if (strukLama) await eksekusiBluetooth(strukLama); else alert("Format struk lama tidak lengkap.");
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .catch(err => console.error('Service Worker gagal:', err));
+            });
+        }
+    </script>
+</body>
+</html>
